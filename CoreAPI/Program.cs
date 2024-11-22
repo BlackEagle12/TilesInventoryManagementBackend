@@ -36,7 +36,7 @@ builder.Services.AddCors(options =>
                       });
 });
 
-builder.Services.InjectDBContextDependencies(builder.Configuration.GetConnectionString("Dev")!);
+builder.Services.InjectDBContextDependencies(builder.Configuration.GetConnectionString("Online")!);
 builder.Services.InjectRepoDependencies();
 builder.Services.InjectServiceDependencies();
 builder.Services.InjectMapperDependnecies();
