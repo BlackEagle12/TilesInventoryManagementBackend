@@ -9,7 +9,8 @@ namespace Repo
         {
             service.AddScoped(typeof(IBaseRepo<>), typeof(BaseRepo<>));
             service.AddScoped<IUserRepository, UserRepository>();
-
+            service.AddScoped<ICountryRepository, CountryRepository>();
+            service.AddScoped<IStateRepoRepository, StateRepository>();
         }
     }
 }
