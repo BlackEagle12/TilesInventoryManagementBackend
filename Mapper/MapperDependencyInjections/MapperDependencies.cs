@@ -7,7 +7,6 @@ namespace Mapper
         public static void InjectMapperDependnecies(this IServiceCollection service)
         {
             //service.AddScoped<IUserService, UserService>();
-
         }
     }
 }
