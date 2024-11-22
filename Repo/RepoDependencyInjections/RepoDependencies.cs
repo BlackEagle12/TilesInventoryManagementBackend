@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Repo.UserRepo;
 
 namespace Repo
 {
@@ -7,7 +8,7 @@ namespace Repo
         public static void InjectRepoDependencies(this IServiceCollection service)
         {
             service.AddScoped(typeof(IBaseRepo<>), typeof(BaseRepo<>));
-            //service.AddScoped<IUserService, UserService>();
+            service.AddScoped<IUserRepository, UserRepository>();
 
         }
     }

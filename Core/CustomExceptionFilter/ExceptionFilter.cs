@@ -20,7 +20,7 @@ namespace Core.CustomExceptionFilter
                             handledException.ErrorMessage
                         ))
                     {
-                        StatusCode = (int)handledException.StatusCode,
+                        StatusCode = handledException.StatusCode,
                     };
 
                 context.ExceptionHandled = true;
@@ -30,7 +30,7 @@ namespace Core.CustomExceptionFilter
             {
                 context.Result =
                     new ObjectResult(new ApiException(
-                            HttpStatusCode.InternalServerError,
+                            StatusCodes.Status500InternalServerError,
                             ex.Message
                         ))
                     {

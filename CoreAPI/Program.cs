@@ -1,5 +1,6 @@
 using Core;
 using Core.CustomExceptionFilter;
+using Data;
 using Mapper;
 using Repo;
 using Service;
