@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+﻿using Data.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Linq.Expressions;
-using Data.Contexts;
 
 namespace Repo
 {

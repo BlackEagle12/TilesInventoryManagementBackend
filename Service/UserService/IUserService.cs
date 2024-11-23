@@ -1,11 +1,11 @@
-﻿
-using Data.Models;
-using Dto;
+﻿using Dto;
 
 namespace Service
 {
     public interface IUserService
     {
-        public User AddUser(UserDto user);
+        Task<UserDto> AddOrUpdateUser(UserDto user);
+        Task<UserDto> GetUser(int id);
+        Task<List<UserDto>> GetUsersPage(CommonDto commonDto);
     }
 }
