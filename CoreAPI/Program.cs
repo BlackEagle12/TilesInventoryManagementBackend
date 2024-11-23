@@ -4,6 +4,7 @@ using Data;
 using Mapper;
 using Repo;
 using Service;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -14,10 +15,6 @@ builder.Services.AddControllers(options =>
     options.Filters.Add<ExceptionFilter>();
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 IConfigurationSection appSettingsSection = builder.Configuration.GetSection("AppSettings");
 builder.Services.Configure<AppSettings>(appSettingsSection);
 var appSettings = appSettingsSection.Get<AppSettings>();
@@ -25,17 +22,13 @@ var appSettings = appSettingsSection.Get<AppSettings>();
 var emailConfigurationSection = builder.Configuration.GetSection("EmailConfigurations");
 builder.Services.Configure<EmailConfigurations>(emailConfigurationSection);
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-                      policy =>
-                      {
-                          policy.WithOrigins(appSettings!.ClientList)
-                          .AllowAnyHeader()
-                          .AllowAnyMethod();
-                      });
-});
 
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+
+builder.Services.InjectCoreDependencies(builder.Configuration, MyAllowSpecificOrigins);
 builder.Services.InjectDBContextDependencies(builder.Configuration.GetConnectionString("Online")!);
 builder.Services.InjectRepoDependencies();
 builder.Services.InjectServiceDependencies();
@@ -48,13 +41,20 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(o =>
+    {
+        o.DocumentTitle = "TilesInventoryManagement";
+        o.DocExpansion(DocExpansion.None);
+        o.EnableFilter();
+        o.EnableTryItOutByDefault();
+    });
 }
 
 app.UseCors(MyAllowSpecificOrigins);
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

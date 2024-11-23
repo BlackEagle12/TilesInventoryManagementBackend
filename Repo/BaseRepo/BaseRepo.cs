@@ -7,8 +7,8 @@ namespace Repo
 {
     public class BaseRepo<T> : IBaseRepo<T> where T : class
     {
-        private readonly InventoryDBContext _context;
-        private DbSet<T> _db;
+        protected readonly InventoryDBContext _context;
+        protected DbSet<T> _db;
         public BaseRepo(
                 InventoryDBContext context
             )
