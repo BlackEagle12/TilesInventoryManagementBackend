@@ -36,7 +36,7 @@ builder.Services.AddCors(options =>
                       });
 });
 
-builder.Services.InjectDBContextDependencies(builder.Configuration.GetConnectionString("Online")!);
+builder.Services.InjectDBContextDependencies(builder.Configuration.GetConnectionString("local")!);
 builder.Services.InjectRepoDependencies();
 builder.Services.InjectServiceDependencies();
 builder.Services.InjectMapperDependnecies();
@@ -47,9 +47,11 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    
 }
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors(MyAllowSpecificOrigins);
 

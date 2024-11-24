@@ -1,11 +1,43 @@
 ﻿using Data.Models;
 using Dto;
 
-namespace Mapper.UserMapper
+namespace Mapper
 {
     public class UserMapper
     {
-        public UserDto GetUserDto(User user)
+        public User GetUser(UserDto userDto)
+        {
+            return new User
+            {
+                Id = userDto.Id,
+                Email = userDto.Email,
+                Username = userDto.Email,
+                Password = userDto.Password,
+                FirstName = userDto.FirstName,
+                LastName = userDto.LastName,
+                PhoneNo = userDto.PhoneNo,
+                Address1 = userDto.Address1,
+                Address2 = userDto.Address2,
+                CountryId = userDto.CountryId,
+                StateId = userDto.StateId,
+                City = userDto.City,
+                Pincode = userDto.Pincode,
+                Summary = userDto.Summary,
+                BirthDate = userDto.BirthDate,
+                AniversaryDate = userDto.AniversaryDate,
+                RoleId = userDto.RoleId,
+                CategoryId = userDto.CategoryId,
+                AddedOn = userDto.AddedOn,
+                LastUpdatedOn = userDto.LastUpdatedOn
+            };
+        }
+        public UserDto GetUserDto(
+                User user, 
+                Country? userCountry = null, 
+                State? userState = null, 
+                Role? userRole = null, 
+                Category? userCategory = null
+            )
         {
             return new UserDto
             {
@@ -17,22 +49,21 @@ namespace Mapper.UserMapper
                 PhoneNo = user.PhoneNo,
                 Address1 = user.Address1,
                 Address2 = user.Address2,
-
-                //Country = user.CountryId
-                //State = user.StateId
-
+                CountryId = user.CountryId,
+                Country = userCountry?.CountryName,
+                StateId = user.StateId,
+                State = userState?.StateName,
                 City = user.City,
                 Pincode = user.Pincode,
                 Summary = user.Summary,
                 BirthDate = user.BirthDate,
                 AniversaryDate = user.AniversaryDate,
-
-                //Role = user.RoleId,
-                //CategoryId = user.CategoryId,
-
-                AddedOn = user.AddedOn,
-                
-            }
+                RoleId = user.RoleId,
+                Role = userRole?.RoleName,
+                CategoryId = user.Id,
+                Category = userCategory?.CategoryName,
+                AddedOn = user.AddedOn
+            };
         }
     }
 }
