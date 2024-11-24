@@ -1,6 +1,6 @@
 ﻿namespace Dto
 {
-    public class UserDto : CommonDto
+    public class UserDto
     {
         public int Id { get; set; }
 

@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Repo.UserRepo;
 
 namespace Repo
 {
@@ -10,7 +9,9 @@ namespace Repo
             service.AddScoped(typeof(IBaseRepo<>), typeof(BaseRepo<>));
             service.AddScoped<IUserRepository, UserRepository>();
             service.AddScoped<ICountryRepository, CountryRepository>();
-            service.AddScoped<IStateRepoRepository, StateRepository>();
+            service.AddScoped<IStateRepository, StateRepository>();
+            service.AddScoped<IRoleRepository, RoleRepository>();
+            service.AddScoped<ICategoryRepository, CategoryRepository>();
         }
     }
 }

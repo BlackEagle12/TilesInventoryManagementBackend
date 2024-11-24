@@ -29,11 +29,12 @@ public partial class InventoryDBContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__categori__3213E83FE7AD815A");
+            entity.HasKey(e => e.Id).HasName("PK__categori__3213E83F3A454FE0");
 
             entity.Property(e => e.AddedOn).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.LastUpdatedOn).HasDefaultValueSql("(getdate())");
@@ -41,7 +42,7 @@ public partial class InventoryDBContext : DbContext
 
         modelBuilder.Entity<Country>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__countrie__3213E83FFD107A49");
+            entity.HasKey(e => e.Id).HasName("PK__countrie__3213E83F09E30467");
 
             entity.Property(e => e.AddedOn).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.LastUpdatedOn).HasDefaultValueSql("(getdate())");
@@ -49,7 +50,7 @@ public partial class InventoryDBContext : DbContext
 
         modelBuilder.Entity<Permission>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__permissi__3213E83F2D314129");
+            entity.HasKey(e => e.Id).HasName("PK__permissi__3213E83F01F735FC");
 
             entity.Property(e => e.AddedOn).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.LastUpdatedOn).HasDefaultValueSql("(getdate())");
@@ -57,7 +58,7 @@ public partial class InventoryDBContext : DbContext
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__roles__3213E83FCE205E13");
+            entity.HasKey(e => e.Id).HasName("PK__roles__3213E83F71BD8C7A");
 
             entity.Property(e => e.AddedOn).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.LastUpdatedOn).HasDefaultValueSql("(getdate())");
@@ -65,7 +66,7 @@ public partial class InventoryDBContext : DbContext
 
         modelBuilder.Entity<RolePermission>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__role_per__3213E83F758D1465");
+            entity.HasKey(e => e.Id).HasName("PK__role_per__3213E83F54C18C0C");
 
             entity.Property(e => e.AddedOn).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.LastUpdatedOn).HasDefaultValueSql("(getdate())");
@@ -73,7 +74,7 @@ public partial class InventoryDBContext : DbContext
 
         modelBuilder.Entity<State>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__states__3213E83F8208F9BB");
+            entity.HasKey(e => e.Id).HasName("PK__states__3213E83FAD08814C");
 
             entity.Property(e => e.AddedOn).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.LastUpdatedOn).HasDefaultValueSql("(getdate())");
@@ -81,7 +82,7 @@ public partial class InventoryDBContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__users__3213E83FC8A8A869");
+            entity.HasKey(e => e.Id).HasName("PK__users__3213E83F8137773C");
 
             entity.Property(e => e.AddedOn).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.LastUpdatedOn).HasDefaultValueSql("(getdate())");

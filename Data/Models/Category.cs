@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Data.Models;
 
 [Table("categories")]
-[Index("CategoryName", Name = "UQ__categori__5189E2556CCF4EEE", IsUnique = true)]
+[Index("CategoryName", Name = "UQ__categori__5189E2553211966E", IsUnique = true)]
 public partial class Category
 {
     [Key]

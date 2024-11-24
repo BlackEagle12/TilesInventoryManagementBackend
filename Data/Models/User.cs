@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Data.Models;
 
 [Table("users")]
-[Index("Email", Name = "UQ__users__AB6E6164F6D93F50", IsUnique = true)]
-[Index("PhoneNo", Name = "UQ__users__E6BE36DCDB2580B6", IsUnique = true)]
-[Index("Username", Name = "UQ__users__F3DBC5725FCE3BB0", IsUnique = true)]
+[Index("Email", Name = "UQ__users__AB6E6164DB1CCD15", IsUnique = true)]
+[Index("PhoneNo", Name = "UQ__users__E6BE36DCEFB2259A", IsUnique = true)]
+[Index("Username", Name = "UQ__users__F3DBC5728C2D5A53", IsUnique = true)]
 public partial class User
 {
     [Key]

@@ -16,6 +16,7 @@ namespace Core.CustomExceptionFilter
                 context.Result =
                     new ObjectResult(new ApiResponse(
                             handledException.StatusCode,
+                            null,
                             handledException.ErrorMessage
                         ))
                     {

@@ -41,6 +41,7 @@ CREATE TABLE roles
 	[id] INT PRIMARY KEY IDENTITY(1,1),
 	[role_name] VARCHAR(100) UNIQUE NOT NULL,
 	[description] VARCHAR(1000),
+	[is_default] BIT NOT NULL,
 	[added_on] DATETIME2 NOT NULL DEFAULT GETDATE(),
 	[last_updated_on] DATETIME2 NOT NULL DEFAULT GETDATE()
 )
@@ -106,12 +107,12 @@ VALUES
 
 TRUNCATE TABLE [dbo].roles
 INSERT INTO [dbo].roles
-	([role_name], [description])
+	([role_name], [description], [is_default])
 VALUES
-	('CLIENT', 'End user'),
-	('MEMBER', 'Level 1 internal user'),
-	('ADMIN', 'Level 2 internal user'),
-	('OWNER', 'Owner of the system') 
+	('CLIENT', 'End user', 1),
+	('MEMBER', 'Level 1 internal user', 0),
+	('ADMIN', 'Level 2 internal user', 0),
+	('OWNER', 'Owner of the system', 0) 
 
 TRUNCATE TABLE [dbo].[permissions]
 INSERT INTO [dbo].[permissions]

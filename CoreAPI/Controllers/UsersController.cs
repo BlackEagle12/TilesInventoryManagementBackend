@@ -3,8 +3,6 @@ using Dto;
 using Microsoft.AspNetCore.Mvc;
 using Service;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace API.Controllers
 {
     [Route("api/[controller]")]
@@ -19,12 +17,12 @@ namespace API.Controllers
 
         // GET: api/<UsersController>
         [HttpGet]
-        public async Task<ActionResult> Get(CommonDto commonDto)
+        public async Task<ActionResult> Get(int? pageNo, int? pageSize)
         {
             return Ok(
                         new ApiResponse(
-                            StatusCodes.Status501NotImplemented,
-                            await _userService.GetUsersPage(commonDto)
+                            StatusCodes.Status200OK, 
+                            await _userService.GetUsersPageAsync(pageNo, pageSize)
                         )
                     );
         }
@@ -35,34 +33,102 @@ namespace API.Controllers
         {
             return Ok(
                         new ApiResponse(
-                            StatusCodes.Status501NotImplemented,
-                            await _userService.GetUser(id)
+                            StatusCodes.Status200OK,
+                            await _userService.GetUserAsync(id)
                         )
                     );
         }
+
+        // POST api/<UsersController>/IsUserExist
+        [HttpPost("IsUserExist")]
+        public async Task<ActionResult> IsUserExist([FromBody] UserDto userDto)
+        {
+            return Ok(
+                        new ApiResponse(
+                            StatusCodes.Status200OK,
+                            await _userService.IsUserExistAsync(userDto)
+                        )
+                    );
+        }
+
+        // POST api/<UsersController>/IsEmailExist
+        [HttpPost("IsEmailExist")]
+        public async Task<ActionResult> IsEmailExist([FromBody] string email)
+        {
+            return Ok(
+                        new ApiResponse(
+                            StatusCodes.Status200OK,
+                            await _userService.IsEmailExistAsync(email)
+                        )
+                    );
+        }
+
+        // POST api/<UsersController>/IsUserNameExist
+        [HttpPost("IsUserNameExist")]
+        public async Task<ActionResult> IsUserNameExist([FromBody] string userName)
+        {
+            return Ok(
+                        new ApiResponse(
+                            StatusCodes.Status200OK,
+                            await _userService.IsUserNameExistAsync(userName)
+                        )
+                    );
+        }
+
+        // POST api/<UsersController>/IsPhoneNoExist
+        [HttpPost("IsPhoneNoExist")]
+        public async Task<ActionResult> IsPhoneNoExist([FromBody] string phNo)
+        {
+            return Ok(
+                        new ApiResponse(
+                            StatusCodes.Status200OK,
+                            await _userService.IsPhoneExistAsync(phNo)
+                        )
+                    );
+        }
+
 
         // POST api/<UsersController>
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] UserDto userDto)
         {
+            await _userService.AddUserAsync(userDto);
+
             return Ok(
                         new ApiResponse(
-                            StatusCodes.Status501NotImplemented,
-                            await _userService.AddOrUpdateUser(userDto)
+                            StatusCodes.Status200OK,
+                            null,
+                            "User Added sucessfully"
                         )
                     );
         }
 
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<ActionResult> Put(int id, [FromBody] UserDto userDto)
         {
+            await _userService.UpdateUserAsync(id, userDto);
+
+            return Ok(
+                        new ApiResponse(
+                            StatusCodes.Status200OK,
+                            null,
+                            "User updated sucessfully"
+                        )
+                    );
         }
 
         // DELETE api/<UsersController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
+            return Ok(
+                        new ApiResponse(
+                            StatusCodes.Status200OK,
+                            await _userService.DeleteUserAsync(id),
+                            "User updated sucessfully"
+                        )
+                    );
         }
     }
 }
