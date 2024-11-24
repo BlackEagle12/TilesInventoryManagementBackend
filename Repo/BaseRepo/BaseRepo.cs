@@ -49,9 +49,9 @@ namespace Repo
             return await _db.FindAsync(id);
         }
 
-        public IQueryable<T> GetQueyable()
+        public IQueryable<T> GetQueyable(bool asNoTracking = false)
         {
-            return _db.AsQueryable();
+            return  asNoTracking ? _db.AsNoTracking() : _db;
         }
 
         public async Task InsertAsync(T entity)
@@ -64,7 +64,8 @@ namespace Repo
             await _context.SaveChangesAsync();
         }
 
-        public IQueryable<T> Select(Expression<Func<T, bool>> expression)
+        // Confusing with LINQ Select and this provide expression in GetQueryable only
+        public IQueryable<T> Select(Expression<Func<T, bool>> expression) 
         {
             return _db.Where(expression);
         }

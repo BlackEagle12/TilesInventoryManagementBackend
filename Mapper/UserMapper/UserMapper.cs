@@ -2,7 +2,9 @@
 using Data.Models;
 using Dto;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -14,13 +16,13 @@ namespace Mapper
         private readonly AppSettings _appSettings;
         private readonly HttpContext? _httpContext;
 
-        public UserMapper(AppSettings appSttings, IHttpContextAccessor contextAccessor)
+        public UserMapper(IOptions<AppSettings> appSttings, IHttpContextAccessor contextAccessor)
         {
-            _appSettings = appSttings;
+            _appSettings = appSttings.Value;
             _httpContext = contextAccessor.HttpContext;
         }
 
-        public UserDto GetUserDto(User user)
+
         public User GetUser(UserDto userDto)
         {
             return new User
@@ -47,15 +49,17 @@ namespace Mapper
                 LastUpdatedOn = userDto.LastUpdatedOn
             };
         }
+
         public UserDto GetUserDto(
                 User user, 
                 Country? userCountry = null, 
                 State? userState = null, 
                 Role? userRole = null, 
-                Category? userCategory = null
+                Category? userCategory = null,
+                bool includeToken = false
             )
         {
-            return new UserDto
+            var dto = new UserDto
             {
                 Id = user.Id,
                 Email = user.Email,
@@ -74,17 +78,22 @@ namespace Mapper
                 Summary = user.Summary,
                 BirthDate = user.BirthDate,
                 AniversaryDate = user.AniversaryDate,
-
-                //Role = user.RoleId,
-                //CategoryId = user.CategoryId,
-
-                AddedOn = user.AddedOn,
+                RoleId = user.RoleId,
+                Role = userRole?.RoleName,
+                CategoryId = user.Id,
+                Category = userCategory?.CategoryName,
+                AddedOn = user.AddedOn
 
             };
+
+            if (includeToken)
+                dto.Token = GenerateAuthToken(dto);
+
+            return dto;
         }
 
 
-        public string GenerateAuthToken(User user, Role role, List<Permission> permissions)
+        public string GenerateAuthToken(UserDto user)
         {
             var secretKey = Encoding.ASCII.GetBytes(_appSettings.SecurityKey);
 
@@ -95,13 +104,12 @@ namespace Mapper
                 new(ClaimTypes.Surname, user.LastName, ClaimValueTypes.String),
                 new(ClaimTypes.GivenName, user.FirstName, ClaimValueTypes.String),
                 new(ClaimTypes.Email, user.Email, ClaimValueTypes.String),
-                new(ClaimTypes.Role, role.RoleName, ClaimValueTypes.String),
+                new(ClaimTypes.Role, user.Role!, ClaimValueTypes.String),
                 new("RoleId", user.RoleId.ToString(), ClaimValueTypes.Integer),
                 new(ClaimTypes.MobilePhone, user.PhoneNo.ToString(), ClaimValueTypes.Integer),
+
+                new Claim(ClaimTypes.UserData, JsonConvert.SerializeObject(user), JsonClaimValueTypes.Json)
             };
-
-            claims.AddRange(permissions.Select(x => new Claim(ClaimTypes.UserData, x.PermissionName.ToString(), ClaimValueTypes.String)));
-
 
             var tokenDescriptor = new JwtSecurityToken(
                 issuer: _appSettings.APIUrl,
@@ -113,12 +121,6 @@ namespace Mapper
                 );
 
             return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
-                RoleId = user.RoleId,
-                Role = userRole?.RoleName,
-                CategoryId = user.Id,
-                Category = userCategory?.CategoryName,
-                AddedOn = user.AddedOn
-            };
         }
 
     }

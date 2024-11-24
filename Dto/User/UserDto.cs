@@ -49,5 +49,7 @@
         public DateTime AddedOn { get; set; }
 
         public DateTime LastUpdatedOn { get; set; }
+
+        public string? Token { get; set; }
     }
 }

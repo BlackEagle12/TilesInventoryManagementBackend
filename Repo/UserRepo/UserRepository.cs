@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Linq.Expressions;
-using Core;
+﻿using Core;
 using Data.Contexts;
 using Data.Models;
 using Microsoft.AspNetCore.Http;
@@ -112,6 +110,13 @@ namespace Repo
             Delete(user);
             await SaveChangesAsync();
             return user;
+        }
+
+        public IQueryable<User> Get(Expression<Func<User, bool>> filter, bool asNoTracking = false)
+        {
+            var query = GetQueyable(false).Where(filter);
+
+            return query;
         }
     }
 }

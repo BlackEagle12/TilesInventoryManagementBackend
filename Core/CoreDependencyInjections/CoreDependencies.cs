@@ -12,7 +12,7 @@ namespace Core
     {
         public static void InjectCoreDependencies(this IServiceCollection services, IConfiguration configuration, string corsPolicy)
         {
-            var appSettings = configuration.GetValue<AppSettings>("AppSettings");
+            var appSettings = configuration.GetSection("AppSettings").Get<AppSettings>();
 
             services.AddJWT(configuration);
 
@@ -34,7 +34,8 @@ namespace Core
 
         public static void AddJWT(this IServiceCollection services, IConfiguration configuration)
         {
-            var appSettings = configuration.GetValue<AppSettings>("AppSettings");
+            var appSettings = configuration.GetSection("AppSettings").Get<AppSettings>();
+            
 
             var key = Encoding.ASCII.GetBytes(appSettings!.SecurityKey!);
             services.AddAuthentication(x =>

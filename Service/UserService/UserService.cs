@@ -1,6 +1,7 @@
 ﻿using Core;
 using Dto;
 using Mapper;
+using Microsoft.EntityFrameworkCore;
 using Repo;
 
 namespace Service
@@ -109,14 +110,70 @@ namespace Service
             return _userMapper.GetUserDto(user);
         }
 
-        public async Task<UserDto> Login(string userName, string password)
+        public async Task<UserDto> LoginAsync(string userName, string password)
         {
             if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
                 throw new ApiException(401, $"Invalid {nameof(userName)} or {nameof(password)}");
 
-            return await Task.FromResult(new UserDto());
+            var countryQuery = _countryRepository.GetQueyable(false);
+            var stateQuery = _stateRepository.GetQueyable(false);
+            var roleQuery = _roleRepository.GetQueyable(false);
+            var categoryQuery = _categoryRepository.GetQueyable(false);
 
-            //var user = _userRepo.
+
+            var user = (await  _userRepo.Get(x => SQLFunctions.Like(x.Username, userName))
+                                        .GroupJoin(
+                                            countryQuery, 
+                                            x => x.CountryId, 
+                                            y => y.Id, 
+                                            (User, countries) => new { User, countries }
+                                        )
+                                        .SelectMany(
+                                            x => x.countries.DefaultIfEmpty(),
+                                            (result, Country) => new { result.User, Country }
+                                        )
+                                        .GroupJoin(
+                                            stateQuery, 
+                                            x => x.User.StateId, 
+                                            y => y.Id, 
+                                            (result, states) => new { result.User, result.Country, states }
+                                        )
+                                        .SelectMany(
+                                            x => x.states.DefaultIfEmpty(), 
+                                            (result, State) => new { result.User, result.Country, State }
+                                        )
+                                        .GroupJoin(
+                                            roleQuery, 
+                                            x => x.User.RoleId, 
+                                            y => y.Id, 
+                                            (result, roles) => new { result.User, result.Country, result.State, roles }
+                                        )
+                                        .SelectMany(
+                                            x => x.roles.DefaultIfEmpty(), 
+                                            (result, Role) => new { result.User, result.Country, result.State, Role }
+                                        )
+                                        .GroupJoin(
+                                            categoryQuery, 
+                                            x => x.User.CategoryId, 
+                                            y => y.Id, 
+                                            (result, categories) => new { result.User, result.Country, result.State, result.Role, categories }
+                                        )
+                                        .SelectMany(
+                                            x => x.categories.DefaultIfEmpty(), 
+                                            (result, Category) => new { result.User, result.Country, result.State, result.Role, Category }
+                                        )
+                                        .FirstOrDefaultAsync());
+
+            if (user == null
+               || user.User == null
+               || string.IsNullOrEmpty(user.User.Password)
+               || !user.User.Password.Equals(password))
+            {
+                throw new ApiException(401, "Invalid Username or Password");
+            }
+
+
+            return _userMapper.GetUserDto(user.User, user.Country, user.State, user.Role, user.Category, true);
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using Data.Models;
+using System.Linq.Expressions;
 
 namespace Repo
 {
@@ -13,5 +14,6 @@ namespace Repo
         Task AddUserAsync(User user);
         Task UpdateUserAsync(int id, User updatedUser);
         Task<User> DeleteUserAsync(int id);
+        IQueryable<User> Get(Expression<Func<User, bool>> filter, bool asNoTracking = false);
     }
 }
