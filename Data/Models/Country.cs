@@ -7,8 +7,8 @@ using Microsoft.EntityFrameworkCore;
 namespace Data.Models;
 
 [Table("countries")]
-[Index("CountryCode", Name = "UQ__countrie__3436E9A53F13ACA9", IsUnique = true)]
-[Index("CountryName", Name = "UQ__countrie__F7018894CDF9EB21", IsUnique = true)]
+[Index("CountryCode", Name = "UQ__countrie__3436E9A5615F7750", IsUnique = true)]
+[Index("CountryName", Name = "UQ__countrie__F7018894DEF2D316", IsUnique = true)]
 public partial class Country
 {
     [Key]

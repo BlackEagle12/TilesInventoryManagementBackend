@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Data.Models;
 
 [Table("roles")]
-[Index("RoleName", Name = "UQ__roles__783254B1B6F27AF7", IsUnique = true)]
+[Index("RoleName", Name = "UQ__roles__783254B171EF73C7", IsUnique = true)]
 public partial class Role
 {
     [Key]
@@ -23,6 +23,9 @@ public partial class Role
     [StringLength(1000)]
     [Unicode(false)]
     public string? Description { get; set; }
+
+    [Column("is_default")]
+    public bool IsDefault { get; set; }
 
     [Column("added_on")]
     public DateTime AddedOn { get; set; }
