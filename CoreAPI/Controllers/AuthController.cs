@@ -1,4 +1,5 @@
 ﻿using Core;
+using Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,12 +21,12 @@ namespace API.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(string userName, string password)
+        public async Task<IActionResult> Login([FromBody] UserDto user)
         {
             return Ok(
                          new ApiResponse(
                              StatusCodes.Status200OK,
-                             await _userService.LoginAsync(userName, password)
+                             await _userService.LoginAsync(user.Username, user.Password)
                          )
                      );
         }

@@ -41,7 +41,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.InjectCoreDependencies(builder.Configuration, MyAllowSpecificOrigins);
-builder.Services.InjectDBContextDependencies(builder.Configuration.GetConnectionString("Online")!);
+builder.Services.InjectDBContextDependencies(builder.Configuration.GetConnectionString("local")!);
 
 builder.Services.AddScoped<UserDto>(provider =>
 {
