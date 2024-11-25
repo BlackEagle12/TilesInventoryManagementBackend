@@ -24,8 +24,8 @@ namespace Repo
 
             return userPradicate
                     .And(x => x.Email.Equals(user.Email) ||
-                        x.Equals(user.Username) ||
-                        x.Equals(user.PhoneNo));
+                        x.Username.Equals(user.Username) ||
+                        x.PhoneNo.Equals(user.PhoneNo));
         }
 
         public async Task<bool> IsUserExistAsync(User user)
