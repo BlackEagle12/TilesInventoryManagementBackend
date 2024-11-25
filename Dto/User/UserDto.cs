@@ -36,7 +36,7 @@
 
         public DateTime? BirthDate { get; set; }
 
-        public DateTime? AniversaryDate { get; set; }
+        public DateTime? AnniversaryDate { get; set; }
 
         public int RoleId { get; set; }
 
