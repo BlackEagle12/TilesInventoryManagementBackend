@@ -1,4 +1,5 @@
-USE [TilesInventoryManagement]
+-- USE [TilesInventoryManagement]
+USE [vicks_TilesInventoryManagement]
 
 DROP TABLE IF EXISTS [dbo].[users]
 CREATE TABLE users
@@ -103,6 +104,7 @@ VALUES
 	('INTERIOR DESIGNER', 'Demo data'),
 	('PLUMBING CONSULTANT', 'Demo data'),
 	('RETAILER', 'Demo data'),
+	('INTERNAL USER', 'Demo data'),
 	('OTHER', 'Demo data')
 
 TRUNCATE TABLE [dbo].roles

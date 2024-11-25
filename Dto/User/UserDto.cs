@@ -1,6 +1,4 @@
-﻿using Dto;
-
-namespace Dto
+﻿namespace Dto
 {
     public class UserDto
     {
@@ -45,11 +43,13 @@ namespace Dto
         public string? Role { get; set; }
 
         public int CategoryId { get; set; }
-        
+
         public string? Category { get; set; }
 
         public DateTime AddedOn { get; set; }
 
         public DateTime LastUpdatedOn { get; set; }
+
+        public string? Token { get; set; }
     }
 }

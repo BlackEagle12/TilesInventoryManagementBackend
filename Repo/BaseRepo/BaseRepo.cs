@@ -1,14 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+﻿using Data.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Linq.Expressions;
-using Data.Contexts;
 
 namespace Repo
 {
     public class BaseRepo<T> : IBaseRepo<T> where T : class
     {
-        private readonly InventoryDBContext _context;
-        private DbSet<T> _db;
+        protected readonly InventoryDBContext _context;
+        protected DbSet<T> _db;
         public BaseRepo(
                 InventoryDBContext context
             )
@@ -49,9 +49,9 @@ namespace Repo
             return await _db.FindAsync(id);
         }
 
-        public IQueryable<T> GetQueyable()
+        public IQueryable<T> GetQueyable(bool asNoTracking = false)
         {
-            return _db.AsQueryable();
+            return  asNoTracking ? _db.AsNoTracking() : _db;
         }
 
         public async Task InsertAsync(T entity)
@@ -64,7 +64,8 @@ namespace Repo
             await _context.SaveChangesAsync();
         }
 
-        public IQueryable<T> Select(Expression<Func<T, bool>> expression)
+        // Confusing with LINQ Select and this provide expression in GetQueryable only
+        public IQueryable<T> Select(Expression<Func<T, bool>> expression) 
         {
             return _db.Where(expression);
         }

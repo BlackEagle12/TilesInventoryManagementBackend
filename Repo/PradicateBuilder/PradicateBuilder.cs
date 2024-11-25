@@ -59,6 +59,19 @@ namespace Repo
             return Expression.Lambda<T>(merge(first.Body, secondBody), first.Parameters);
         }
 
+        public static Expression<Func<T, object>> CreateSortExpression<T>(string fieldName)
+        {
+            var property = typeof(T).GetProperties().FirstOrDefault(x => x.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
+
+            if (property == null)
+                throw new Exception($"No field Found named {fieldName}");
+
+            var param = Expression.Parameter(typeof(T), "x");
+            var body = Expression.Convert(Expression.Property(param, property), typeof(object));
+
+            return Expression.Lambda<Func<T, object>>(body, param);
+        }
+
         private class ParameterRebinder : ExpressionVisitor
         {
             readonly Dictionary<ParameterExpression, ParameterExpression> map;

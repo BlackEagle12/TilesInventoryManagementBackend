@@ -1,5 +1,4 @@
-﻿
-using Dto;
+﻿using Dto;
 
 namespace Service
 {
@@ -14,5 +13,6 @@ namespace Service
         Task<bool> IsPhoneExistAsync(string email);
         Task UpdateUserAsync(int id, UserDto userDto);
         Task<UserDto> DeleteUserAsync(int id);
+        Task<UserDto> LoginAsync(string userName, string password);
     }
 }

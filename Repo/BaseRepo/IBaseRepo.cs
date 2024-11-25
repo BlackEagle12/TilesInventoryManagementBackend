@@ -8,7 +8,7 @@ namespace Repo
         IDbContextTransaction BeginTransaction();
         Task CompleTransaction(IDbContextTransaction transaction);
         Task<T?> GetByIdAsync(object id);
-        IQueryable<T> GetQueyable();
+        IQueryable<T> GetQueyable(bool asNoTracking = false);
         Task InsertAsync(T entity);
         void Update(T entity);
         void Delete(T entity);
