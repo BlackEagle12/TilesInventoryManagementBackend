@@ -1,4 +1,7 @@
-﻿using System.Linq.Expressions;
+﻿using Core;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 
 namespace Repo
@@ -70,6 +73,64 @@ namespace Repo
             var body = Expression.Convert(Expression.Property(param, property), typeof(object));
 
             return Expression.Lambda<Func<T, object>>(body, param);
+        }
+
+        public static Expression GetExpression<T>(ParameterExpression param, CommonFilterParams filter)
+        {
+            var prop = typeof(T).GetProperties().FirstOrDefault(x => x.Name.Equals(filter.FieldName, StringComparison.OrdinalIgnoreCase));
+
+            if (prop is null)
+                throw new Exception($"Invalid field name {filter.FieldName}");
+
+            // The member you want to evaluate (x => x.FirstName)
+            MemberExpression member = Expression.Property(param, prop);
+
+            // The value you want to evaluate
+            var filterOperator = Operators.GetValue(filter.Operator);
+
+            string refinedFilterValue = filter.Value?.ToString()?.Replace("%", "[%]")?.Replace("_", "[_]")?.Replace("[", "[[]")!;
+            var value = filterOperator switch
+            {
+                Operator.Contains => $"%{refinedFilterValue}%",
+                Operator.StartsWith => $"{refinedFilterValue}%",
+                Operator.EndsWith => $"%{refinedFilterValue}",
+                _ => filter.Value,
+            };
+            ConstantExpression constant = Expression.Constant(value);
+
+
+            // Determine how we want to apply the expression
+            switch (filterOperator)
+            {
+                case Operator.Equals:
+                    return Expression.Equal(member, constant);
+                
+                case Operator.NotEquals:
+                    return Expression.NotEqual(member, constant);
+
+                case Operator.Contains:
+                    return Expression.Call(EF.Functions.GetType().GetMethod("Like")!, member, constant);
+
+                case Operator.GreaterThan:
+                    return Expression.GreaterThan(member, constant);
+
+                case Operator.GreaterThanOrEqual:
+                    return Expression.GreaterThanOrEqual(member, constant);
+
+                case Operator.LessThan:
+                    return Expression.LessThan(member, constant);
+
+                case Operator.LessThanOrEqualTo:
+                    return Expression.LessThanOrEqual(member, constant);
+
+                case Operator.StartsWith:
+                    return Expression.Call(EF.Functions.GetType().GetMethod("Like")!, member, constant);
+
+                case Operator.EndsWith:
+                    return Expression.Call(EF.Functions.GetType().GetMethod("Like")!, member, constant);
+            }
+
+            return null;
         }
 
         private class ParameterRebinder : ExpressionVisitor
