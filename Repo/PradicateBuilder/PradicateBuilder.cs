@@ -88,16 +88,13 @@ namespace Repo
             // The value you want to evaluate
             var filterOperator = Operators.GetValue(filter.Operator);
 
-            string refinedFilterValue = filter.Value?.ToString()?.Replace("%", "[%]")?.Replace("_", "[_]")?.Replace("[", "[[]")!;
-            var value = filterOperator switch
+            var filterValue = filter.Value;
+            if (prop.PropertyType == typeof(string))
             {
-                Operator.Contains => $"%{refinedFilterValue}%",
-                Operator.StartsWith => $"{refinedFilterValue}%",
-                Operator.EndsWith => $"%{refinedFilterValue}",
-                _ => filter.Value,
-            };
-            ConstantExpression constant = Expression.Constant(value);
+                filterValue = filterValue?.ToString()?.ToLikeFilterString(filterOperator);
+            }
 
+            ConstantExpression constant = Expression.Constant(filterValue);
 
             // Determine how we want to apply the expression
             switch (filterOperator)
