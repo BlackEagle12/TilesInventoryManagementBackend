@@ -46,13 +46,17 @@ namespace API
                 }
 
                 var token = await authHeader?.Replace("Bearer ", string.Empty, StringComparison.OrdinalIgnoreCase)
-                                                              .ValidateToken(_appSettings.ClientList, _appSettings.APIUrl)!;
+                                                              .ValidateToken(_appSettings.ClientList, _appSettings.APIUrl, _appSettings.SecurityKey)!;
 
                 if (token == null || !token.IsValid)
                 {
                     context.Result = unauthorizedResult;
                 }
 
+            }
+            catch (ApiException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
