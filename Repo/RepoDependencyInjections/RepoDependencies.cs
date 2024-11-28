@@ -12,6 +12,8 @@ namespace Repo
             service.AddScoped<IStateRepository, StateRepository>();
             service.AddScoped<IRoleRepository, RoleRepository>();
             service.AddScoped<ICategoryRepository, CategoryRepository>();
+            service.AddScoped<IPermissionRepository, PermissionRepository>();
+            service.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
         }
     }
 }

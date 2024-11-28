@@ -134,5 +134,18 @@ namespace API.Controllers
                         )
                     );
         }
+
+        [HttpGet("permissions")]
+        [TypeFilter(typeof(AuthorizationFilter))]
+        public async Task<ActionResult> GetPermissions()
+        {
+
+            return Ok(
+                        new ApiResponse(
+                            StatusCodes.Status200OK,
+                            await _userService.GetUserPermissionAsync()
+                        )
+                    );
+        }
     }
 }

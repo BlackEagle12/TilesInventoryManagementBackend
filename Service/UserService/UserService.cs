@@ -15,6 +15,8 @@ namespace Service
         private readonly ICategoryRepository _categoryRepository;
         private readonly IStateRepository _stateRepository;
         private readonly ICountryRepository _countryRepository;
+        private readonly IPermissionRepository _permissionRepository;
+        private readonly IRolePermissionRepository _rolePermissionRepository;
         private readonly UserDto _loggedInUser;
 
         private readonly UserMapper _userMapper;
@@ -24,6 +26,8 @@ namespace Service
                 ICategoryRepository categoryRepository,
                 IStateRepository stateRepository,
                 ICountryRepository countryRepository,
+                IPermissionRepository permissionRepository,
+                IRolePermissionRepository rolePermissionRepository,
                 UserMapper userMapper,
                 UserDto loggedInUser)
         {
@@ -34,6 +38,8 @@ namespace Service
             _countryRepository = countryRepository;
             _userMapper = userMapper;
             _loggedInUser = loggedInUser;
+            _permissionRepository = permissionRepository;
+            _rolePermissionRepository = rolePermissionRepository;
         }
 
         public async Task AddUserAsync(UserDto userDto)
@@ -193,6 +199,24 @@ namespace Service
 
         }
 
+        public async Task<List<string>> GetUserPermissionAsync()
+        {
+            var permissionQuery = _permissionRepository.GetQueyable();
+            var rolePermissionQuery = _rolePermissionRepository.GetQueyable();
+
+            return
+                await
+                    permissionQuery
+                        .Join(
+                            rolePermissionQuery,
+                            permission => permission.Id,
+                            rolePermission => rolePermission.PermissionId,
+                            (per, rolePer) => new { permission = per, roleId = rolePer.RoleId }
+                        )
+                        .Where(x => x.roleId.Equals(_loggedInUser.RoleId))
+                        .Select(x => x.permission.PermissionName)
+                        .ToListAsync();
+        }
     }
 
 }
