@@ -1,5 +1,4 @@
 ﻿using Core;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -62,7 +61,9 @@ namespace Repo
             return Expression.Lambda<T>(merge(first.Body, secondBody), first.Parameters);
         }
 
-        public static Expression<Func<T, object>> CreateSortExpression<T>(string fieldName)
+        #region Dynamic Filter-Sort
+
+        public static Expression<Func<T, object>> BuildSortExpression<T>(string fieldName)
         {
             var property = typeof(T).GetProperties().FirstOrDefault(x => x.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
 
@@ -74,8 +75,32 @@ namespace Repo
 
             return Expression.Lambda<Func<T, object>>(body, param);
         }
+        public static Expression<Func<T, bool>> BuildFilterExpression<T>(List<CommonFilterParams>? filters)
+        {
+            if (filters == null || !filters.Any())
+                return x => true; // No filters; return a predicate that always evaluates to true.
 
-        public static Expression GetExpression<T>(ParameterExpression param, CommonFilterParams filter)
+            ParameterExpression parameter = Expression.Parameter(typeof(T), "x");
+            Expression? combinedExpression = null;
+
+            foreach (var filter in filters)
+            {
+                if (string.IsNullOrEmpty(filter.FieldName) || filter.Value == null)
+                    continue;
+
+                var fieldExpression = BuildFieldExpression<T>(parameter, filter);
+                if (fieldExpression == null)
+                    continue;
+
+                combinedExpression = combinedExpression == null
+                    ? fieldExpression
+                    : CombineExpressions(combinedExpression, fieldExpression, filter.Condition);
+            }
+
+            return Expression.Lambda<Func<T, bool>>(combinedExpression ?? Expression.Constant(true), parameter);
+        }
+
+        private static Expression BuildFieldExpression<T>(ParameterExpression param, CommonFilterParams filter)
         {
             var prop = typeof(T).GetProperties().FirstOrDefault(x => x.Name.Equals(filter.FieldName, StringComparison.OrdinalIgnoreCase));
 
@@ -86,7 +111,7 @@ namespace Repo
             MemberExpression member = Expression.Property(param, prop);
 
             // The value you want to evaluate
-            var filterOperator = Operators.GetValue(filter.Operator);
+            var filterOperator = Operators.GetValue(filter.Operator!);
 
             var filterValue = filter.Value;
             if (prop.PropertyType == typeof(string))
@@ -97,38 +122,28 @@ namespace Repo
             ConstantExpression constant = Expression.Constant(filterValue);
 
             // Determine how we want to apply the expression
-            switch (filterOperator)
+            return filterOperator switch
             {
-                case Operator.Equals:
-                    return Expression.Equal(member, constant);
-                
-                case Operator.NotEquals:
-                    return Expression.NotEqual(member, constant);
-
-                case Operator.Contains:
-                    return Expression.Call(EF.Functions.GetType().GetMethod("Like")!, member, constant);
-
-                case Operator.GreaterThan:
-                    return Expression.GreaterThan(member, constant);
-
-                case Operator.GreaterThanOrEqual:
-                    return Expression.GreaterThanOrEqual(member, constant);
-
-                case Operator.LessThan:
-                    return Expression.LessThan(member, constant);
-
-                case Operator.LessThanOrEqualTo:
-                    return Expression.LessThanOrEqual(member, constant);
-
-                case Operator.StartsWith:
-                    return Expression.Call(EF.Functions.GetType().GetMethod("Like")!, member, constant);
-
-                case Operator.EndsWith:
-                    return Expression.Call(EF.Functions.GetType().GetMethod("Like")!, member, constant);
-            }
-
-            return null;
+                Operator.Equals => Expression.Equal(member, constant),
+                Operator.NotEquals => Expression.NotEqual(member, constant),
+                Operator.Contains => Expression.Call(EF.Functions.GetType().GetMethod("Like")!, member, constant),
+                Operator.GreaterThan => Expression.GreaterThan(member, constant),
+                Operator.GreaterThanOrEqual => Expression.GreaterThanOrEqual(member, constant),
+                Operator.LessThan => Expression.LessThan(member, constant),
+                Operator.LessThanOrEqualTo => Expression.LessThanOrEqual(member, constant),
+                Operator.StartsWith => Expression.Call(EF.Functions.GetType().GetMethod("Like")!, member, constant),
+                Operator.EndsWith => Expression.Call(EF.Functions.GetType().GetMethod("Like")!, member, constant),
+                _ => null!,
+            };
         }
+        private static Expression CombineExpressions(Expression left, Expression right, string? condition)
+        {
+            return condition?.Equals("or", StringComparison.OrdinalIgnoreCase) ?? false
+                ? Expression.OrElse(left, right)
+                : Expression.AndAlso(left, right);
+        }
+
+        #endregion Dynamic Filter-Sort
 
         private class ParameterRebinder : ExpressionVisitor
         {

@@ -51,10 +51,10 @@ namespace Mapper
         }
 
         public UserDto GetUserDto(
-                User user, 
-                Country? userCountry = null, 
-                State? userState = null, 
-                Role? userRole = null, 
+                User user,
+                Country? userCountry = null,
+                State? userState = null,
+                Role? userRole = null,
                 Category? userCategory = null,
                 bool includeToken = false
             )
@@ -108,7 +108,7 @@ namespace Mapper
                 new("RoleId", user.RoleId.ToString(), ClaimValueTypes.Integer),
                 new(ClaimTypes.MobilePhone, user.PhoneNo.ToString(), ClaimValueTypes.Integer),
 
-                new Claim(ClaimTypes.UserData, JsonConvert.SerializeObject(user), JsonClaimValueTypes.Json)
+                new(ClaimTypes.UserData, JsonConvert.SerializeObject(user), JsonClaimValueTypes.Json)
             };
 
             var tokenDescriptor = new JwtSecurityToken(

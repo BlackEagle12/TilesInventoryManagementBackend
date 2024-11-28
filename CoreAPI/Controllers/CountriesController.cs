@@ -1,5 +1,4 @@
 ﻿using Core;
-using Dto;
 using Microsoft.AspNetCore.Mvc;
 using Service;
 
@@ -13,7 +12,7 @@ namespace API.Controllers
         public CountriesController
             (
                 ICountryService countryService
-            ) 
+            )
         {
             _countryService = countryService;
         }

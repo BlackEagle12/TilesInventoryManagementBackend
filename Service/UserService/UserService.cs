@@ -50,19 +50,9 @@ namespace Service
 
         public async Task<List<UserDto>> GetUsersPageAsync(int? pageNo, int? pageSize)
         {
-            var userList = await _userRepo.GetUsersPageAsync(pageNo, pageSize);
+            //var userList = await _userRepo.GetUsersPageAsync(pageNo, pageSize);
 
-            var countryIdList = userList.Select(x => x.CountryId).Distinct().ToList();
-            var countryDict = await _countryRepository.GetCountryDictAsync(countryIdList);
-
-            var stateIdList = userList.Select(x => x.StateId).Distinct().ToList();
-            var stateDict = await _stateRepository.GetStateDictAsync(stateIdList);
-
-            var roleIdList = userList.Select(x => x.RoleId).Distinct().ToList();
-            var roleDict = await _roleRepository.GetRoleDictAsync(roleIdList);
-
-            var categoryIdList = userList.Select(x => x.CountryId).Distinct().ToList();
-            var categoryDict = await _categoryRepository.GetCategoryDictAsync(categoryIdList);
+            var users = Users
 
             return
                 userList
@@ -74,7 +64,7 @@ namespace Service
                             categoryDict[user.CategoryId])
                     )
                     .ToList();
-                
+
         }
 
         public async Task<bool> IsUserExistAsync(UserDto userDto)
@@ -121,11 +111,11 @@ namespace Service
             var categoryQuery = _categoryRepository.GetQueyable(false);
 
 
-            var user = (await  _userRepo.Get(x => SQLFunctions.Like(x.Username, userName))
+            var user = (await _userRepo.Get(x => SQLFunctions.Like(x.Username, userName))
                                         .GroupJoin(
-                                            countryQuery, 
-                                            x => x.CountryId, 
-                                            y => y.Id, 
+                                            countryQuery,
+                                            x => x.CountryId,
+                                            y => y.Id,
                                             (User, countries) => new { User, countries }
                                         )
                                         .SelectMany(
@@ -133,33 +123,33 @@ namespace Service
                                             (result, Country) => new { result.User, Country }
                                         )
                                         .GroupJoin(
-                                            stateQuery, 
-                                            x => x.User.StateId, 
-                                            y => y.Id, 
+                                            stateQuery,
+                                            x => x.User.StateId,
+                                            y => y.Id,
                                             (result, states) => new { result.User, result.Country, states }
                                         )
                                         .SelectMany(
-                                            x => x.states.DefaultIfEmpty(), 
+                                            x => x.states.DefaultIfEmpty(),
                                             (result, State) => new { result.User, result.Country, State }
                                         )
                                         .GroupJoin(
-                                            roleQuery, 
-                                            x => x.User.RoleId, 
-                                            y => y.Id, 
+                                            roleQuery,
+                                            x => x.User.RoleId,
+                                            y => y.Id,
                                             (result, roles) => new { result.User, result.Country, result.State, roles }
                                         )
                                         .SelectMany(
-                                            x => x.roles.DefaultIfEmpty(), 
+                                            x => x.roles.DefaultIfEmpty(),
                                             (result, Role) => new { result.User, result.Country, result.State, Role }
                                         )
                                         .GroupJoin(
-                                            categoryQuery, 
-                                            x => x.User.CategoryId, 
-                                            y => y.Id, 
+                                            categoryQuery,
+                                            x => x.User.CategoryId,
+                                            y => y.Id,
                                             (result, categories) => new { result.User, result.Country, result.State, result.Role, categories }
                                         )
                                         .SelectMany(
-                                            x => x.categories.DefaultIfEmpty(), 
+                                            x => x.categories.DefaultIfEmpty(),
                                             (result, Category) => new { result.User, result.Country, result.State, result.Role, Category }
                                         )
                                         .FirstOrDefaultAsync());

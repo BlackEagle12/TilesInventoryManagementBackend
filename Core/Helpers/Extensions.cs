@@ -11,7 +11,7 @@ namespace Core
             if (string.IsNullOrEmpty(token))
                 throw new ApiException(StatusCodes.Status401Unauthorized, "Token can not be Empty");
 
-            TokenValidationParameters tokenParams = new TokenValidationParameters()
+            TokenValidationParameters tokenParams = new()
             {
                 ValidateAudience = true,
                 ValidateIssuer = true,
@@ -28,6 +28,9 @@ namespace Core
 
         public static string ToLikeFilterString(this string value, Operator compareOperator)
         {
+            if (!string.IsNullOrEmpty(value))
+                return string.Empty;
+
             var retVal = value.Replace("[", "[[]")
                                      .Replace("_", "[_]")
                                      .Replace("%", "[%]");

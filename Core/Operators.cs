@@ -11,7 +11,7 @@
             _operators.Add("=", Operator.Equals);
             _operators.Add("==", Operator.Equals);
             _operators.Add("===", Operator.Equals);
-            
+
             _operators.Add("notequals", Operator.NotEquals);
             _operators.Add("notequalto", Operator.NotEquals);
             _operators.Add("!=", Operator.NotEquals);
