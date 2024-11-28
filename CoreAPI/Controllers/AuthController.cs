@@ -1,5 +1,6 @@
 ﻿using Core;
 using Dto;
+using Dto.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +22,7 @@ namespace API.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody] UserDto user)
+        public async Task<IActionResult> Login([FromBody] LogInDto user)
         {
             return Ok(
                          new ApiResponse(
