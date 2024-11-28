@@ -17,7 +17,7 @@ namespace Service
         public async Task<List<DropDownDto>> GetDefaultRolesDDAsync()
         {
             var roles = await _roleRepo.GetDefaultRolesAsync();
-            return roles.Select(x => new DropDownDto { Text = x.RoleName, Value = x.Id }).ToList();
+            return roles.Select( x => new DropDownDto { Text = x.RoleName, Value = x.Id}).ToList();
         }
     }
 }

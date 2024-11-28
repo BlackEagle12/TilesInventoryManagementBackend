@@ -7,6 +7,6 @@ namespace Repo
     {
         Task<List<Role>> GetDefaultRolesAsync();
         Task<Role> GetRoleAsync(int roleId);
-        Task<Dictionary<int, Role>> GetRoleDictAsync(List<int> roleIdList);
+        Task<Dictionary<int,Role>> GetRoleDictAsync(List<int> roleIdList);
     }
 }

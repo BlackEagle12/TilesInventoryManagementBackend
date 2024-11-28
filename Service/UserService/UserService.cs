@@ -1,4 +1,5 @@
 ﻿using Core;
+using Data.Models;
 using Dto;
 using Mapper;
 using Microsoft.EntityFrameworkCore;
@@ -48,22 +49,66 @@ namespace Service
             return _userMapper.GetUserDto(user, userCountry, userState, userRole, userCategory);
         }
 
-        public async Task<List<UserDto>> GetUsersPageAsync(int? pageNo, int? pageSize)
+        public async Task<KeyValuePair<int, List<UserDto>>> GetUsersPageAsync(CommonGridParams gridParams)
         {
             //var userList = await _userRepo.GetUsersPageAsync(pageNo, pageSize);
 
-            var users = Users
+            var usersQuery = _userRepo.GetQueyable(false);
+            var countryQuery = _countryRepository.GetQueyable(false);
+            var stateQuery = _stateRepository.GetQueyable(false);
+            var roleQuery = _roleRepository.GetQueyable(false);
+            var categoryQuery = _categoryRepository.GetQueyable(false);
 
-            return
-                userList
-                    .Select(user =>
-                        _userMapper.GetUserDto(
-                            user, countryDict[user.CountryId],
-                            stateDict[user.StateId],
-                            roleDict[user.RoleId],
-                            categoryDict[user.CategoryId])
-                    )
-                    .ToList();
+            var selector = _userMapper.GetUserDtoExpression();
+
+            var userDtosQuery = usersQuery
+                .GroupJoin(
+                    countryQuery,
+                    x => x.CountryId,
+                    y => y.Id,
+                    (User, countries) => new { User, countries }
+                )
+                .SelectMany(
+                    x => x.countries.DefaultIfEmpty(),
+                    (result, Country) => new { result.User, Country }
+                )
+                .GroupJoin(
+                    stateQuery,
+                    x => x.User.StateId,
+                    y => y.Id,
+                    (result, states) => new { result.User, result.Country, states }
+                )
+                .SelectMany(
+                    x => x.states.DefaultIfEmpty(),
+                    (result, State) => new { result.User, result.Country, State }
+                )
+                .GroupJoin(
+                    roleQuery,
+                    x => x.User.RoleId,
+                    y => y.Id,
+                    (result, roles) => new { result.User, result.Country, result.State, roles }
+                )
+                .SelectMany(
+                    x => x.roles.DefaultIfEmpty(),
+                    (result, Role) => new { result.User, result.Country, result.State, Role }
+                )
+                .GroupJoin(
+                    categoryQuery,
+                    x => x.User.CategoryId,
+                    y => y.Id,
+                    (result, categories) => new { result.User, result.Country, result.State, result.Role, categories }
+                )
+                .SelectMany(
+                    x => x.categories.DefaultIfEmpty(),
+                    (result, Category) => new Tuple<User, Country?, State?, Role?, Category?>(result.User, result.Country, result.State, result.Role, Category)
+                )
+                .Select(selector)
+                .ApplyFilters(gridParams.Filters)
+                .ApplySorting(gridParams.SortBy, gridParams.IsDescending);
+
+            var result = await userDtosQuery.GetPaginatedAsync(gridParams.Page, gridParams.PageSize);
+
+            return await Task.FromResult(new KeyValuePair<int,List<UserDto>>(result.Key, result.Value));
 
         }
 

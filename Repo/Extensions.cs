@@ -26,8 +26,8 @@ namespace Repo
             if (gridParams != null && gridParams.Any())
             {
                 Expression<Func<T, bool>> filterExp = PradicateBuilder.BuildFilterExpression<T>(gridParams);
-                source = source.Where(filterExp);
-            }
+                source = source.Where(filterExp);           
+            } 
 
             return source;
         }
@@ -47,14 +47,23 @@ namespace Repo
             return source;
         }
 
-        public static async Task<KeyValuePair<int, IQueryable<T>>> GetPaginated<T>(this IQueryable<T> source, int page, int pageSize)
+        public static async Task<KeyValuePair<int, List<T>>> GetPaginatedAsync<T>(this IQueryable<T> source, int page, int pageSize)
         {
-            var count = source.Select(x => 0).CountAsync();
+            var count = await source.Select(x => 0).CountAsync();
+
+            var result = await source.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            return new KeyValuePair<int, List<T>>(count, result);
+
+        }
+        
+        public static IQueryable<T> GetPaginatedAsync<T>(this IQueryable<T> source, int page, int pageSize, out int count)
+        {
+            count = source.Select(x => 0).Count();
 
             source = source.Skip((page - 1) * pageSize).Take(pageSize);
 
-            return new KeyValuePair<int, IQueryable<T>>(await count, source);
-
+            return source;
         }
     }
 }

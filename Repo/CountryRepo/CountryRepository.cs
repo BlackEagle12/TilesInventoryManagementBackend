@@ -30,7 +30,7 @@ namespace Repo
 
         public async Task<Dictionary<int, Country>> GetCountryDictAsync(List<int> countryIdList)
         {
-            return await
+            return await 
                         Select(x => countryIdList.Contains(x.Id))
                         .ToDictionaryAsync(x => x.Id);
         }

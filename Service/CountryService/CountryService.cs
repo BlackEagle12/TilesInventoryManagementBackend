@@ -23,7 +23,7 @@ namespace Service
         public async Task<List<DropDownDto>> GetCountriesDDAsync()
         {
             var countries = await _countryRepo.GetAllCountriesAsync();
-            return countries.Select(x => new DropDownDto() { Text = x.CountryName, Value = x.Id }).ToList();
+            return countries.Select(x => new DropDownDto() { Text = x.CountryName, Value = x.Id}).ToList();
         }
     }
 }

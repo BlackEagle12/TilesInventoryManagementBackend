@@ -18,7 +18,7 @@ namespace Service
         public async Task<List<DropDownDto>> GetCategoriesDDAsync()
         {
             var categories = await _categoryRepo.GetCategoriesAsync();
-            return categories.Select(x => new DropDownDto { Text = x.CategoryName, Value = x.Id }).ToList();
+            return categories.Select(x => new DropDownDto { Text = x.CategoryName, Value = x.Id}).ToList();
         }
     }
 }

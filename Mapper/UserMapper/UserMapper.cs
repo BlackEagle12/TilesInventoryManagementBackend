@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Text;
 
@@ -92,6 +93,34 @@ namespace Mapper
             return dto;
         }
 
+        public Expression<Func<Tuple<User, Country?, State?, Role?, Category?>, UserDto>> GetUserDtoExpression()
+        {
+            return userData => new UserDto
+            {
+                Id = userData.Item1.Id,
+                Email = userData.Item1.Email,
+                Username = userData.Item1.Username,
+                FirstName = userData.Item1.FirstName,
+                LastName = userData.Item1.LastName,
+                PhoneNo = userData.Item1.PhoneNo,
+                Address1 = userData.Item1.Address1,
+                Address2 = userData.Item1.Address2,
+                CountryId = userData.Item1.CountryId,
+                StateId = userData.Item1.StateId,
+                City = userData.Item1.City,
+                Pincode = userData.Item1.Pincode,
+                Summary = userData.Item1.Summary,
+                BirthDate = userData.Item1.BirthDate,
+                AnniversaryDate = userData.Item1.AniversaryDate,
+                RoleId = userData.Item1.RoleId,
+                CategoryId = userData.Item1.Id,
+                AddedOn = userData.Item1.AddedOn,
+                Country = userData.Item2 != null ? userData.Item2.CountryName : null,
+                State = userData.Item3 != null ? userData.Item3.StateName : null,
+                Role = userData.Item4 != null ? userData.Item4.RoleName : null,
+                Category = userData.Item5 != null ? userData.Item5.CategoryName : null,
+            };
+        }
 
         public string GenerateAuthToken(UserDto user)
         {
@@ -108,7 +137,7 @@ namespace Mapper
                 new("RoleId", user.RoleId.ToString(), ClaimValueTypes.Integer),
                 new(ClaimTypes.MobilePhone, user.PhoneNo.ToString(), ClaimValueTypes.Integer),
 
-                new(ClaimTypes.UserData, JsonConvert.SerializeObject(user), JsonClaimValueTypes.Json)
+                new Claim(ClaimTypes.UserData, JsonConvert.SerializeObject(user), JsonClaimValueTypes.Json)
             };
 
             var tokenDescriptor = new JwtSecurityToken(

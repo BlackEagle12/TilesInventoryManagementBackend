@@ -10,7 +10,7 @@ namespace Service
         public StateService
             (
                 IStateRepository stateRepo
-            )
+            ) 
         {
             _stateRepo = stateRepo;
         }

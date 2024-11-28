@@ -1,4 +1,5 @@
-﻿using Data.Contexts;
+﻿using Core;
+using Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Linq.Expressions;
@@ -51,7 +52,7 @@ namespace Repo
 
         public IQueryable<T> GetQueyable(bool asNoTracking = false)
         {
-            return asNoTracking ? _db.AsNoTracking() : _db;
+            return  asNoTracking ? _db.AsNoTracking() : _db;
         }
 
         public async Task InsertAsync(T entity)
@@ -65,7 +66,7 @@ namespace Repo
         }
 
         // Confusing with LINQ Select and this provide expression in GetQueryable only
-        public IQueryable<T> Select(Expression<Func<T, bool>> expression)
+        public IQueryable<T> Select(Expression<Func<T, bool>> expression) 
         {
             return _db.Where(expression);
         }

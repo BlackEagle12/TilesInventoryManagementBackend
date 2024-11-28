@@ -16,13 +16,13 @@ namespace API.Controllers
         }
 
         // GET: api/<UsersController>
-        [HttpPost]
+        [HttpPost("GetAll")]
         public async Task<ActionResult> GetAll([FromBody] CommonGridParams gridParams)
         {
             return Ok(
                         new ApiResponse(
-                            StatusCodes.Status200OK,
-                            await _userService.GetUsersPageAsync(pageNo, pageSize)
+                            StatusCodes.Status200OK, 
+                            await _userService.GetUsersPageAsync(gridParams)
                         )
                     );
         }
