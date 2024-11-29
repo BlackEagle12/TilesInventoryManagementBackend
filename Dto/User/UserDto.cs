@@ -1,4 +1,6 @@
-﻿namespace Dto
+﻿using Newtonsoft.Json;
+
+namespace Dto
 {
     public class UserDto
     {
@@ -8,6 +10,7 @@
 
         public string Username { get; set; } = null!;
 
+        [JsonIgnore]
         public string Password { get; set; } = null!;
 
         public string FirstName { get; set; } = null!;
@@ -51,5 +54,59 @@
         public DateTime LastUpdatedOn { get; set; }
 
         public string? Token { get; set; }
+
+        public UserDto(){}
+
+        [JsonConstructor]
+        public UserDto(int id,
+                       string email,
+                       string username,
+                       string password,
+                       string firstName,
+                       string lastName,
+                       string phoneNo,
+                       string address1,
+                       string address2,
+                       int countryId,
+                       string country,
+                       int stateId,
+                       string state,
+                       string city,
+                       string pincode,
+                       string summary,
+                       DateTime birthDate,
+                       DateTime anniversaryDate,
+                       int roleId,
+                       string role,
+                       int categoryId,
+                       string category,
+                       DateTime addedOn,
+                       DateTime lastUpdatedOn)
+        {
+            Id = id;
+            Email = email;
+            Username = username;
+            Password = password;
+            FirstName = firstName;
+            LastName = lastName;
+            PhoneNo = phoneNo;
+            Address1 = address1;
+            Address2 = address2;
+            CountryId = countryId;
+            Country = country;
+            StateId = stateId;
+            State = state;
+            City = city;
+            Pincode = pincode;
+            Summary = summary;
+            BirthDate = birthDate;
+            AnniversaryDate = anniversaryDate;
+            RoleId = roleId;
+            Role = role;
+            CategoryId = categoryId;
+            Category = category;
+            AddedOn = addedOn;
+            LastUpdatedOn = lastUpdatedOn;
+        }
     }
 }

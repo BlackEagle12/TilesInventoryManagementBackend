@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Text;
 
@@ -51,10 +52,10 @@ namespace Mapper
         }
 
         public UserDto GetUserDto(
-                User user, 
-                Country? userCountry = null, 
-                State? userState = null, 
-                Role? userRole = null, 
+                User user,
+                Country? userCountry = null,
+                State? userState = null,
+                Role? userRole = null,
                 Category? userCategory = null,
                 bool includeToken = false
             )
@@ -92,7 +93,6 @@ namespace Mapper
             return dto;
         }
 
-
         public string GenerateAuthToken(UserDto user)
         {
             var secretKey = Encoding.ASCII.GetBytes(_appSettings.SecurityKey);
@@ -113,7 +113,7 @@ namespace Mapper
 
             var tokenDescriptor = new JwtSecurityToken(
                 issuer: _appSettings.APIUrl,
-                audience: _httpContext?.Request.Host.Value, // TODO: need to check
+                audience: $"{_httpContext?.Request.Scheme}{Uri.SchemeDelimiter}{_httpContext?.Request.Host.Value}", // TODO: need to check
                 notBefore: DateTime.UtcNow,
                 expires: DateTime.UtcNow.AddHours(_appSettings.TokenExpiryHours),
                 signingCredentials: new SigningCredentials(new SymmetricSecurityKey(secretKey), SecurityAlgorithms.Aes256CbcHmacSha512),

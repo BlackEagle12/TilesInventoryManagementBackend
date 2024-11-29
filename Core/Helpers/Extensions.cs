@@ -34,5 +34,25 @@ namespace Core
 
             return result;
         }
+
+        public static string ToLikeFilterString(this string value, Operator compareOperator)
+        {
+            if(!string.IsNullOrEmpty(value))
+                return string.Empty;
+
+            var retVal = value.Replace("[", "[[]")
+                                     .Replace("_", "[_]")
+                                     .Replace("%", "[%]");
+
+            retVal = compareOperator switch
+            {
+                Operator.Contains => retVal = $"%{value}%",
+                Operator.StartsWith => retVal = $"{value}%",
+                Operator.EndsWith => retVal = $"%{value}",
+                _ => retVal = retVal.Trim()
+            };
+
+            return retVal;
+        }
     }
 }
