@@ -113,7 +113,7 @@ namespace Mapper
 
             var tokenDescriptor = new JwtSecurityToken(
                 issuer: _appSettings.APIUrl,
-                audience: _httpContext?.Request.Host.Value, // TODO: need to check
+                audience: $"{_httpContext?.Request.Scheme}{Uri.SchemeDelimiter}{_httpContext?.Request.Host.Value}", // TODO: need to check
                 notBefore: DateTime.UtcNow,
                 expires: DateTime.UtcNow.AddHours(_appSettings.TokenExpiryHours),
                 signingCredentials: new SigningCredentials(new SymmetricSecurityKey(secretKey), SecurityAlgorithms.Aes256CbcHmacSha512),
