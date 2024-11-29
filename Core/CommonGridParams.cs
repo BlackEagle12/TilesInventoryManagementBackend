@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Core
@@ -6,6 +7,7 @@ namespace Core
     public class CommonGridParams
     {
         [Range(1, int.MaxValue, ErrorMessage = $"Field {nameof(Page)} Must be grater than zero.")]
+        [DefaultValue(1)]
         public int Page { get; set; } = 1;
 
         [Range(0, 100, ErrorMessage = $"Field {nameof(PageSize)} Must be a positive Number less than 100.")]

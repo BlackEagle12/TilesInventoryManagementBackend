@@ -72,7 +72,7 @@ namespace Repo
                 throw new Exception($"No field Found named {fieldName}");
 
             var param = Expression.Parameter(typeof(T), "x");
-            var body = Expression.Convert(Expression.Property(param, property), typeof(object));
+            var body = Expression.Property(param, property);
 
             return Expression.Lambda<Func<T, object>>(body, param);
         }

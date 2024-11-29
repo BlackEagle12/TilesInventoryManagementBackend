@@ -54,6 +54,10 @@ namespace API
                 }
 
             }
+            catch (ApiException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 throw new Exception("Authorization failed", ex);
