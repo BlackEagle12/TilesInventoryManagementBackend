@@ -205,6 +205,8 @@ namespace Service
                     RoleId = userData.User.RoleId,
                     CategoryId = userData.User.Id,
                     AddedOn = userData.User.AddedOn,
+                    Password = userData.User.Password,
+                    LastUpdatedOn = userData.User.LastUpdatedOn,
 
                     Country = userData.Country != null ? userData.Country.CountryName : null,
                     State = userData.State != null ? userData.State.StateName : null,
