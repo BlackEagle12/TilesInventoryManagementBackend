@@ -2,7 +2,6 @@ using API;
 using Core;
 using Core.CustomExceptionFilter;
 using Data;
-using Data.Models;
 using Dto;
 using Mapper;
 using Newtonsoft.Json;
@@ -25,8 +24,7 @@ builder.Services.Configure<EmailConfigurations>(emailConfigurationSection);
 // Add services to the container.
 builder.Services.AddControllers(options =>
 {
-    options.Filters.Add<ExceptionFilter>();
-    //options.Filters.Add<AuthorizationFilter>();
+    //options.Filters.Add<ExceptionFilter>();
 
 }).AddNewtonsoftJson(opt =>
 {
@@ -41,7 +39,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.InjectCoreDependencies(builder.Configuration, MyAllowSpecificOrigins);
-builder.Services.InjectDBContextDependencies(builder.Configuration.GetConnectionString("local")!);
+builder.Services.InjectDBContextDependencies(builder.Configuration.GetConnectionString("Online")!);
 
 builder.Services.AddScoped<UserDto>(provider =>
 {
@@ -71,9 +69,12 @@ builder.Services.InjectMapperDependnecies();
 
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionHandlerMiddleware>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+}
     app.UseSwagger();
     app.UseSwaggerUI(o =>
     {
@@ -82,7 +83,7 @@ if (app.Environment.IsDevelopment())
         o.EnableFilter();
         o.EnableTryItOutByDefault();
     });
-}
+
 
 app.UseCors(MyAllowSpecificOrigins);
 

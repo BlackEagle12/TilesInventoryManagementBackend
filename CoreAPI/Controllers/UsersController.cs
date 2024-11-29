@@ -17,7 +17,8 @@ namespace API.Controllers
 
         // GET: api/<UsersController>
         [HttpPost("GetAll")]
-        public async Task<ActionResult> GetAll([FromBody] CommonGridParams gridParams)
+        [TypeFilter(typeof(AuthorizationFilter))]
+        public async Task<ActionResult> GetAll(CommonGridParams gridParams)
         {
             return Ok(
                         new ApiResponse(
@@ -29,6 +30,7 @@ namespace API.Controllers
 
         // GET api/<UsersController>/5
         [HttpGet("{id}")]
+        [TypeFilter(typeof(AuthorizationFilter))]
         public async Task<ActionResult> Get(int id)
         {
             return Ok(
@@ -105,6 +107,7 @@ namespace API.Controllers
 
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
+        [TypeFilter(typeof(AuthorizationFilter))]
         public async Task<ActionResult> Put(int id, [FromBody] UserDto userDto)
         {
             await _userService.UpdateUserAsync(id, userDto);
@@ -120,6 +123,7 @@ namespace API.Controllers
 
         // DELETE api/<UsersController>/5
         [HttpDelete("{id}")]
+        [TypeFilter(typeof(AuthorizationFilter))]
         public async Task<ActionResult> Delete(int id)
         {
             return Ok(

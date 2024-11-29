@@ -5,6 +5,7 @@ using Mapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Repo;
+using System.Linq.Expressions;
 
 namespace Service
 {
@@ -15,6 +16,7 @@ namespace Service
         private readonly ICategoryRepository _categoryRepository;
         private readonly IStateRepository _stateRepository;
         private readonly ICountryRepository _countryRepository;
+        private readonly UserDto _loggedInUser;
 
         private readonly UserMapper _userMapper;
         public UserService(
@@ -23,7 +25,8 @@ namespace Service
                 ICategoryRepository categoryRepository,
                 IStateRepository stateRepository,
                 ICountryRepository countryRepository,
-                UserMapper userMapper)
+                UserMapper userMapper,
+                UserDto loggedInUser)
         {
             _userRepo = userRepository;
             _roleRepository = roleRepository;
@@ -31,6 +34,7 @@ namespace Service
             _stateRepository = stateRepository;
             _countryRepository = countryRepository;
             _userMapper = userMapper;
+            _loggedInUser = loggedInUser;
         }
 
         public async Task AddUserAsync(UserDto userDto)
