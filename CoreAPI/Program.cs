@@ -4,6 +4,7 @@ using Core.CustomExceptionFilter;
 using Data;
 using Dto;
 using Mapper;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Repo;
 using Service;
@@ -36,7 +37,42 @@ builder.Services.AddControllers(options =>
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(opt =>
+{
+    opt.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo()
+    {
+        Title = "TilesInventorySystem.API",
+        Version = "v1",
+    });
+
+    opt.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme()
+    {
+        Description = "JWT Authorization header using the Bearer scheme.",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer",
+                },
+                In = ParameterLocation.Header,
+                Name = "Authorization",
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer"
+            },
+            new string[] { }
+        }
+    });
+});
 
 builder.Services.InjectCoreDependencies(builder.Configuration, MyAllowSpecificOrigins);
 builder.Services.InjectDBContextDependencies(builder.Configuration.GetConnectionString("Online")!);
@@ -70,7 +106,6 @@ builder.Services.InjectMapperDependnecies();
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlerMiddleware>();
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

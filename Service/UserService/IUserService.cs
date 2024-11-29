@@ -1,4 +1,5 @@
-﻿using Dto;
+﻿using Core;
+using Dto;
 
 namespace Service
 {
@@ -6,7 +7,7 @@ namespace Service
     {
         Task AddUserAsync(UserDto user);
         Task<UserDto> GetUserAsync(int id);
-        Task<List<UserDto>> GetUsersPageAsync(int? pageNo, int? pageSize);
+        Task<KeyValuePair<int, List<UserDto>>> GetUsersPageAsync(CommonGridParams gridParams);
         Task<bool> IsUserExistAsync(UserDto userDto);
         Task<bool> IsEmailExistAsync(string email);
         Task<bool> IsUserNameExistAsync(string email);

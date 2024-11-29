@@ -16,14 +16,14 @@ namespace API.Controllers
         }
 
         // GET: api/<UsersController>
-        [HttpGet]
+        [HttpPost("GetAll")]
         [TypeFilter(typeof(AuthorizationFilter))]
-        public async Task<ActionResult> Get(int? pageNo, int? pageSize)
+        public async Task<ActionResult> GetAll(CommonGridParams gridParams)
         {
             return Ok(
                         new ApiResponse(
                             StatusCodes.Status200OK, 
-                            await _userService.GetUsersPageAsync(pageNo, pageSize)
+                            await _userService.GetUsersPageAsync(gridParams)
                         )
                     );
         }
