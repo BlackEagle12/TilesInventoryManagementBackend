@@ -52,6 +52,11 @@ namespace API
                 {
                     context.Result = unauthorizedResult;
                 }
+                else
+                {
+                    context.HttpContext.User = new System.Security.Claims.ClaimsPrincipal(token?.ClaimsIdentity);
+                }
+
 
             }
             catch (ApiException)

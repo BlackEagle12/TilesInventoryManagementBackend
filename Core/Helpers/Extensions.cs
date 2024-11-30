@@ -20,10 +20,10 @@ namespace Core
             {
                 ValidateAudience = true,
                 ValidateIssuer = true,
-                ValidateLifetime = true,
                 //ValidAudience = validAudience,
                 ValidAudiences = validAudiences,
                 ValidIssuer = validIssuer,
+                ValidAlgorithms = new string[] { SecurityAlgorithms.Aes256CbcHmacSha512 },
 
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(key),

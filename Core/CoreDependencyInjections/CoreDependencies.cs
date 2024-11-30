@@ -49,6 +49,7 @@ namespace Core
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidAlgorithms = new string[] { SecurityAlgorithms.Aes256CbcHmacSha512 },
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidIssuer = appSettings.APIUrl!,

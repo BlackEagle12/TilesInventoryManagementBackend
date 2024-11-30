@@ -74,14 +74,12 @@ namespace Dto
                        string city,
                        string pincode,
                        string summary,
-                       DateTime birthDate,
-                       DateTime anniversaryDate,
+                       DateTime? birthDate,
+                       DateTime? anniversaryDate,
                        int roleId,
                        string role,
                        int categoryId,
-                       string category,
-                       DateTime addedOn,
-                       DateTime lastUpdatedOn)
+                       string category)
         {
             Id = id;
             Email = email;
@@ -105,8 +103,6 @@ namespace Dto
             Role = role;
             CategoryId = categoryId;
             Category = category;
-            AddedOn = addedOn;
-            LastUpdatedOn = lastUpdatedOn;
         }
     }
 }
