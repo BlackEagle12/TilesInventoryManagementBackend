@@ -71,7 +71,7 @@ builder.Services.AddSwaggerGen(opt =>
 });
 
 builder.Services.InjectCoreDependencies(builder.Configuration, MyAllowSpecificOrigins);
-builder.Services.InjectDBContextDependencies(builder.Configuration.GetConnectionString("Online")!);
+builder.Services.InjectDBContextDependencies(builder.Configuration.GetConnectionString("vicky_local")!);
 builder.Services.InjectRepoDependencies();
 builder.Services.InjectServiceDependencies();
 builder.Services.InjectMapperDependnecies();

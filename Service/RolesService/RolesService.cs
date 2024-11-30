@@ -1,4 +1,5 @@
 ﻿using Dto;
+using Microsoft.EntityFrameworkCore;
 using Repo;
 
 namespace Service
@@ -12,6 +13,11 @@ namespace Service
             )
         {
             _roleRepo = roleRepo;
+        }
+
+        public async Task<List<DropDownDto>> GetAllRolesDDAsync()
+        {
+            return await _roleRepo.GetQueyable().Select(x => new DropDownDto { Text = x.RoleName, Value = x.Id }).ToListAsync();
         }
 
         public async Task<List<DropDownDto>> GetDefaultRolesDDAsync()

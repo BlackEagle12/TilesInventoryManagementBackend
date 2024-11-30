@@ -12,9 +12,10 @@ namespace Service
         Task<bool> IsEmailExistAsync(string email);
         Task<bool> IsUserNameExistAsync(string email);
         Task<bool> IsPhoneExistAsync(string email);
-        Task UpdateUserAsync(int id, UserDto userDto);
+        Task UpdateUserAsync(UserDto userDto);
         Task<UserDto> DeleteUserAsync(int id);
         Task<UserDto> LoginAsync(string userName, string password);
-        Task<List<string>> GetUserPermissionAsync();
+        Task<List<string>> GetLoggedInUserPermissionAsync();
+        Task<bool> UpdateUserRoleAsync(int userId, int updatedRoleId);
     }
 }

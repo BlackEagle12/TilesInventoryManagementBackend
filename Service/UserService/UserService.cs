@@ -5,7 +5,9 @@ using Mapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Repo;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Service
 {
@@ -95,10 +97,10 @@ namespace Service
             return await _userRepo.IsPhoneExistAsync(phoneNo);
         }
 
-        public async Task UpdateUserAsync(int id, UserDto userDto)
+        public async Task UpdateUserAsync(UserDto userDto)
         {
             var updatedUser = _userMapper.GetUser(userDto);
-            await _userRepo.UpdateUserAsync(id, updatedUser);
+            await _userRepo.UpdateUserAsync(_loggedInUser.Id, updatedUser);
         }
 
         public async Task<UserDto> DeleteUserAsync(int id)
@@ -222,7 +224,7 @@ namespace Service
             return userDtosQuery;
         }
 
-        public async Task<List<string>> GetUserPermissionAsync()
+        public async Task<List<string>> GetLoggedInUserPermissionAsync()
         {
             var permissionQuery = _permissionRepository.GetQueyable();
             var rolePermissionQuery = _rolePermissionRepository.GetQueyable();
@@ -239,6 +241,32 @@ namespace Service
                         .Where(x => x.roleId.Equals(_loggedInUser.RoleId))
                         .Select(x => x.permission.PermissionName)
                         .ToListAsync();
+        }
+
+        public async Task<bool> UpdateUserRoleAsync(int userId, int updatedRoleId)
+        {
+            var userPermissions = await GetLoggedInUserPermissionAsync();
+
+            if(userPermissions.Any(x => x.Equals("UPDATE_USER_LIST")))
+            {
+                var user = await _userRepo.GetByIdAsync(userId);
+                if(user != null) 
+                {
+                    user.RoleId = updatedRoleId;
+                    _userRepo.Update(user);
+                    await _userRepo.SaveChangesAsync();
+                    return true;
+                }
+                else
+                {
+                    throw new ApiException(404, "User not found");
+                }
+            }
+            else
+            {
+                throw new ApiException(401, "You don't have permsions to update User Roles");
+            }
+
         }
     }
 
