@@ -107,8 +107,9 @@ namespace Mapper
                 new(ClaimTypes.Role, user.Role!, ClaimValueTypes.String),
                 new("RoleId", user.RoleId.ToString(), ClaimValueTypes.Integer),
                 new(ClaimTypes.MobilePhone, user.PhoneNo.ToString(), ClaimValueTypes.Integer),
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
 
-                new Claim(ClaimTypes.UserData, JsonConvert.SerializeObject(user), JsonClaimValueTypes.Json)
+                new(ClaimTypes.UserData, JsonConvert.SerializeObject(user), JsonClaimValueTypes.Json)
             };
 
             var tokenDescriptor = new JwtSecurityToken(

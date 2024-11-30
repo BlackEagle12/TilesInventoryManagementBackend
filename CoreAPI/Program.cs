@@ -45,50 +45,51 @@ builder.Services.AddSwaggerGen(opt =>
         Version = "v1",
     });
 
-    opt.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme()
+    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "JWT Authorization header using the Bearer scheme.",
-        Name = "Authorization",
         In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
+        Description = "Please Enter a Valid Token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
     });
-
     opt.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer",
-                },
-                In = ParameterLocation.Header,
-                Name = "Authorization",
-                Type = SecuritySchemeType.ApiKey,
-                Scheme = "Bearer"
-            },
-            new string[] { }
-        }
-    });
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type=ReferenceType.SecurityScheme,
+                                Id="Bearer"
+                            }
+                        },
+                        new string[]{}
+                    }
+                });
 });
 
 builder.Services.InjectCoreDependencies(builder.Configuration, MyAllowSpecificOrigins);
-builder.Services.InjectDBContextDependencies(builder.Configuration.GetConnectionString("Online")!);
+builder.Services.InjectDBContextDependencies(builder.Configuration.GetConnectionString("vicky_local")!);
+builder.Services.InjectRepoDependencies();
+builder.Services.InjectServiceDependencies();
+builder.Services.InjectMapperDependnecies();
 
 builder.Services.AddScoped<UserDto>(provider =>
 {
     UserDto dto = null;
     try
     {
-        var userClaim = provider.GetRequiredService<IHttpContextAccessor>()
-                      .HttpContext?
-                      .User?
-                      .Claims?.FirstOrDefault(claim => claim.Type.Equals(ClaimTypes.UserData))?.Value;
+        var httpContext = provider.GetRequiredService<IHttpContextAccessor>().HttpContext;
+        if (httpContext?.Request != null)
+        {
+            var userClaim = httpContext?.User?
+                          .Claims?.FirstOrDefault(claim => claim.Type.Equals(ClaimTypes.UserData))?.Value;
 
-        if (userClaim != null)
-            dto = JsonConvert.DeserializeObject<UserDto>(userClaim)!;
+            if (userClaim != null)
+                dto = JsonConvert.DeserializeObject<UserDto>(userClaim)!;
+        }
     }
     catch (Exception)
     {
@@ -97,11 +98,6 @@ builder.Services.AddScoped<UserDto>(provider =>
 
     return dto!;
 });
-
-builder.Services.InjectRepoDependencies();
-builder.Services.InjectServiceDependencies();
-builder.Services.InjectMapperDependnecies();
-
 
 var app = builder.Build();
 

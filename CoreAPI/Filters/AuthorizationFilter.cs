@@ -29,14 +29,14 @@ namespace API
             try
             {
                 var unauthorizedResult = new ObjectResult(
-                                                                    new ObjectResult(new ApiResponse(
-                                                                                401,
-                                                                                null,
-                                                                                "Invalid Token"
-                                                                            ))
-                                                                    {
-                                                                        StatusCode = 401,
-                                                                    });
+                                                        new ApiResponse(
+                                                                401,
+                                                                null,
+                                                                "Invalid Token"
+                                                            ))
+                                                    {
+                                                        StatusCode = 401,
+                                                    };
 
                 var authHeader = context.HttpContext?.Request?.Headers.Authorization.ToString();
 
@@ -52,6 +52,11 @@ namespace API
                 {
                     context.Result = unauthorizedResult;
                 }
+                else
+                {
+                    context.HttpContext.User = new System.Security.Claims.ClaimsPrincipal(token?.ClaimsIdentity);
+                }
+
 
             }
             catch (ApiException)

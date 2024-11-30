@@ -33,9 +33,8 @@ namespace API
             catch (ApiException ex)
             {
 
-                var text = JsonConvert.SerializeObject(new ApiResponse(
+                var text = JsonConvert.SerializeObject(new ApiException(
                             ex.StatusCode,
-                            null,
                             ex.ErrorMessage
                         ), _settings);
 
@@ -44,9 +43,8 @@ namespace API
             }
             catch (Exception ex)
             {
-                var text = JsonConvert.SerializeObject(new ApiResponse(
+                var text = JsonConvert.SerializeObject(new ApiException(
                         StatusCodes.Status500InternalServerError,
-                        null,
                         ex.Message
                     ), _settings);
 

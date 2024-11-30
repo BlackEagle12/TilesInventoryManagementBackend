@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -17,7 +16,6 @@ namespace Core
             services.AddJWT(configuration);
 
             services.AddHttpContextAccessor();
-            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddCors(options =>
             {
@@ -51,11 +49,13 @@ namespace Core
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidAlgorithms = new string[] { SecurityAlgorithms.Aes256CbcHmacSha512 },
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidIssuer = appSettings.APIUrl!,
-                    ValidAudiences = appSettings!.ClientList!,
-                    ClockSkew = TimeSpan.Zero
+                    ValidAudiences = appSettings!.ClientList!.Append(appSettings.APIUrl),
+                    ClockSkew = TimeSpan.Zero,
+                    
                 };
             });
 

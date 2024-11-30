@@ -106,11 +106,11 @@ namespace API.Controllers
         }
 
         // PUT api/<UsersController>/5
-        [HttpPut("{id}")]
+        [HttpPut]
         [TypeFilter(typeof(AuthorizationFilter))]
-        public async Task<ActionResult> Put(int id, [FromBody] UserDto userDto)
+        public async Task<ActionResult> Put([FromBody] UserDto userDto)
         {
-            await _userService.UpdateUserAsync(id, userDto);
+            await _userService.UpdateUserAsync(userDto);
 
             return Ok(
                         new ApiResponse(
@@ -131,6 +131,33 @@ namespace API.Controllers
                             StatusCodes.Status200OK,
                             await _userService.DeleteUserAsync(id),
                             "User updated sucessfully"
+                        )
+                    );
+        }
+
+        [HttpGet("permissions")]
+        [TypeFilter(typeof(AuthorizationFilter))]
+        public async Task<ActionResult> GetPermissions()
+        {
+
+            return Ok(
+                        new ApiResponse(
+                            StatusCodes.Status200OK,
+                            await _userService.GetLoggedInUserPermissionAsync()
+                        )
+                    );
+        }
+
+        [HttpGet("updateRole/{userId}/{updatedRoleId}")]
+        [TypeFilter(typeof(AuthorizationFilter))]
+        public async Task<ActionResult> UpdateRoles(int userId, int updatedRoleId)
+        {
+
+            return Ok(
+                        new ApiResponse(
+                            StatusCodes.Status200OK,
+                            await _userService.UpdateUserRoleAsync(userId, updatedRoleId),
+                            "Role updated sucessfully"
                         )
                     );
         }
