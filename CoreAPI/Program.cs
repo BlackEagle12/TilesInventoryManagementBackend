@@ -76,19 +76,24 @@ builder.Services.AddSwaggerGen(opt =>
 
 builder.Services.InjectCoreDependencies(builder.Configuration, MyAllowSpecificOrigins);
 builder.Services.InjectDBContextDependencies(builder.Configuration.GetConnectionString("Online")!);
+builder.Services.InjectRepoDependencies();
+builder.Services.InjectServiceDependencies();
+builder.Services.InjectMapperDependnecies();
 
-builder.Services.AddScoped<UserDto>(provider =>
+builder.Services.AddScoped(provider =>
 {
     UserDto dto = null;
     try
     {
-        var userClaim = provider.GetRequiredService<IHttpContextAccessor>()
-                      .HttpContext?
-                      .User?
-                      .Claims?.FirstOrDefault(claim => claim.Type.Equals(ClaimTypes.UserData))?.Value;
+        var httpContext = provider.GetRequiredService<IHttpContextAccessor>().HttpContext;
+        if (httpContext?.Request != null)
+        {
+            var userClaim = httpContext?.User?
+                          .Claims?.FirstOrDefault(claim => claim.Type.Equals(ClaimTypes.UserData))?.Value;
 
-        if (userClaim != null)
-            dto = JsonConvert.DeserializeObject<UserDto>(userClaim)!;
+            if (userClaim != null)
+                dto = JsonConvert.DeserializeObject<UserDto>(userClaim)!;
+        }
     }
     catch (Exception)
     {
@@ -97,11 +102,6 @@ builder.Services.AddScoped<UserDto>(provider =>
 
     return dto!;
 });
-
-builder.Services.InjectRepoDependencies();
-builder.Services.InjectServiceDependencies();
-builder.Services.InjectMapperDependnecies();
-
 
 var app = builder.Build();
 

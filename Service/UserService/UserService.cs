@@ -133,7 +133,6 @@ namespace Service
             return await Task.FromResult(user);
         }
 
-
         private IQueryable<UserDto> GetUserDtoQuery()
         {
             var usersQuery = _userRepo.GetQueyable(false);
